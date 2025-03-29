@@ -38,8 +38,8 @@ def generate_tomato_clock_schedule(start_time, end_time, work_duration, break_du
         activities.append(activity)
 
     # 添加其他活动直到达到所需数量
-    cycle = timedelta(minutes=work_duration+break_duration)
-    count_of_cycles=math.floor((end_time-start_time)/cycle)
+    cycle = timedelta(minutes=work_duration + break_duration)
+    count_of_cycles = math.floor((end_time - start_time) / cycle)
     while len(activities) < count_of_cycles:  # 假设一天安排8个番茄钟周期
         remaining_activities = list(set(all_activities) - set(activities))
         if not remaining_activities:
@@ -70,19 +70,24 @@ def generate_tomato_clock_schedule(start_time, end_time, work_duration, break_du
 def main():
     parser = argparse.ArgumentParser(description="Generate a tomato clock schedule.")
     parser.add_argument(
+        "-s",
         "--start-time",
         type=str,
         default="18:00",
         help="Start time in HH:MM format (default: 18:00)",
     )
-    parser.add_argument("--end-time", type=str, default="22:00", help="End time (HH:MM)")
     parser.add_argument(
+        "-e", "--end-time", type=str, default="22:00", help="End time (HH:MM)"
+    )
+    parser.add_argument(
+        "-w",
         "--work-duration",
         type=int,
         default=25,
         help="Work duration in minutes (default: 25)",
     )
     parser.add_argument(
+        "-b",
         "--break-duration",
         type=int,
         default=5,
