@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 
 import argparse
+import math
+import random
 from datetime import datetime, timedelta
 
 
-def generate_tomato_clock_schedule(start_time, work_duration, break_duration):
+def generate_tomato_clock_schedule(start_time, end_time, work_duration, break_duration):
     # 必须包含的活动
     mandatory_activities = ["数学", "英语", "身体锻炼"]
 
@@ -36,7 +38,9 @@ def generate_tomato_clock_schedule(start_time, work_duration, break_duration):
         activities.append(activity)
 
     # 添加其他活动直到达到所需数量
-    while len(activities) < 8:  # 假设一天安排8个番茄钟周期
+    cycle = timedelta(minutes=work_duration+break_duration)
+    count_of_cycles=math.floor((end_time-start_time)/cycle)
+    while len(activities) < count_of_cycles:  # 假设一天安排8个番茄钟周期
         remaining_activities = list(set(all_activities) - set(activities))
         if not remaining_activities:
             break
@@ -44,8 +48,6 @@ def generate_tomato_clock_schedule(start_time, work_duration, break_duration):
         activities.append(next_activity)
 
     # 打乱活动顺序
-    import random
-
     random.shuffle(activities)
 
     # 计算每个时间段的时间
@@ -60,7 +62,6 @@ def generate_tomato_clock_schedule(start_time, work_duration, break_duration):
                 activity,
             )
         )
-
         current_time = end_work_time + timedelta(minutes=break_duration)
 
     return schedule
@@ -74,6 +75,7 @@ def main():
         default="18:00",
         help="Start time in HH:MM format (default: 18:00)",
     )
+    parser.add_argument("--end-time", type=str, default="22:00", help="End time (HH:MM)")
     parser.add_argument(
         "--work-duration",
         type=int,
@@ -91,12 +93,13 @@ def main():
 
     try:
         start_time = datetime.strptime(args.start_time, "%H:%M")
+        end_time = datetime.strptime(args.end_time, "%H:%M")
     except ValueError:
-        print("Invalid start time format. Please use HH:MM.")
+        print("Invalid time format. Please use HH:MM.")
         return
 
     schedule = generate_tomato_clock_schedule(
-        start_time, args.work_duration, args.break_duration
+        start_time, end_time, args.work_duration, args.break_duration
     )
 
     print(f"Today's daily schedule starting at {args.start_time}:")
